@@ -1,6 +1,8 @@
 """
-Name : Pham, Ngoc Anh Trung
-Matrikelnummer : 7176267
+Name - Matrikelnummer 
+1) Pham, Ngoc Anh Trung - 7176267
+2) Viktor Vironski - 4330455
+3) Andy Disser - 5984875
 """
 
 import numpy as np
