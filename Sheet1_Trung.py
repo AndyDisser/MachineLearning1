@@ -3,6 +3,8 @@ Name - Matrikelnummer
 1) Pham, Ngoc Anh Trung - 7176267
 2) Viktor Vironski - 4330455
 3) Andy Disser - 5984875
+
+Exercise Sheet 1
 """
 
 import numpy as np
@@ -39,7 +41,8 @@ def z_score_normalize(data):
     # Compute mean
     mean = np.sum(data) / np.size(data)
 
-    func = lambda x : (x - mean)**2
+    func = lambda x : np.power((x-mean), 2)
+    
     # Compute deviation
     dev = np.sqrt( np.sum(func(data)) / np.size(data) )
 
