@@ -145,51 +145,6 @@ if __name__ == '__main__':
     iris = datasets.load_iris()
     iris_data = iris['data']
 
-    # ============== Aufgabe 1.2 ================================
-
-    # Initialize an array containing mean distance for each ncluster-value
-    mean_distances_arr = np.zeros(10) 
-
-    # Run k-means for all ncluster-value in [1:10]
-    for ncluster in range(1,11):
-        
-        cluster_indices_arr, centroid_arr = k_means(iris_data[:,:], ncluster)
-
-        total_within_cluster_dist = 0  # Sum of all distances of each point to their respective nearest centroid.
-
-        for k in range(ncluster):  # For each cluster do..
-
-            # Filter array for the cluster k
-            filter_arr_cluster_k = cluster_indices_arr == k
-
-            # Filter the points that belong to their certain cluster.
-            clusterk = iris_data[filter_arr_cluster_k]
-
-            # Compute the distance of elements in this cluster to its according centroid
-            dist_to_nearest_centroid_arr = np.sqrt(np.apply_over_axes(np.sum, np.power((clusterk-centroid_arr[k]),2), 1))
-
-            # Sum it up and add to the culumative sum
-            total_within_cluster_dist += np.sum(dist_to_nearest_centroid_arr)
-
-        # Compute the mean distance over all data point.
-        mean_distance = np.divide(total_within_cluster_dist, iris_data.shape[0])
-
-        # Store it in an array to plot.
-        mean_distances_arr[ncluster-1] = mean_distance
-
-    # Start plotting here.
-    x = np.linspace(1, 10, num=10)  # Create the array: [1,2,...,10] for the x-axis
-
-    f2, myplot = plt.subplots(figsize=(10,10))  # Define the plot.
-
-    myplot.set_title('Elbow')                                       # Set title
-    myplot.set_xlabel('Number of clusters')                         # Set x axis title
-    myplot.set_ylabel('Mean distance to nearest centroid')          # Set y axis title
-    
-    plt.xticks(np.arange(min(x), max(x)+1, 1))                      # Set tick for x axis
-    myplot.plot(x, mean_distances_arr)                              # Plot the line
-
-
     # ================== Aufgabe 2 ===========================
 
     linkage_matrix = agglomerative_clustering(iris_data[:15,:])  # Compute the linkage matrix.
