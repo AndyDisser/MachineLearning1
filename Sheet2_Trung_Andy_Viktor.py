@@ -144,6 +144,41 @@ def k_means_plus(dataset, ncluster):
     return centroid_arr
 
 
+def get_points_of_cluster(linkage_matrix, row_index):
+    """
+    Recursive function which returns an array consisting of indices of original 
+    points in the cluster with the given row index in the given linkage matrix.
+    
+    Inputs:
+    - linkage_matrix : the linkage matrix
+    - row_index : the row index of the cluster in linkage matrix
+
+    Output:
+    - array containing the indices of original points lying in this cluster
+    """
+
+    # Base case (If it was a cluster composed of two original points)
+    if linkage_matrix[row_index, 3] == 2:
+        return np.array([linkage_matrix[row_index, 0], linkage_matrix[row_index, 1]])
+
+    else:  # General case
+        
+        n = linkage_matrix.shape[0] + 1   # The number of original points
+        i = linkage_matrix[row_index, 0]  # The left subcluster
+        j = linkage_matrix[row_index, 1]  # The right subcluster
+
+        left_arr = np.array([linkage_matrix[row_index, 0]])
+        right_arr = np.array([linkage_matrix[row_index, 1]])
+
+        # If the subcluster i or j is not trivial (not a single-element-cluster)
+        if (i >= n):
+            left_arr = get_points_of_cluster(linkage_matrix, (i-n).astype(int))
+        if (j >= n):
+            right_arr = get_points_of_cluster(linkage_matrix, (j-n).astype(int))
+
+        return np.concatenate([left_arr, right_arr])
+
+
 def agglomerative_clustering(data):
     """
     Cluster the data using the agglomerative method.
@@ -213,8 +248,12 @@ def agglomerative_clustering(data):
         count_arr[n+k] = count_arr[mapped_i.astype(int)] + count_arr[mapped_j.astype(int)]
         linkage_matrix[k, 3] = count_arr[n+k]
 
-        # Merge (compute the centroid)
-        centroid = np.divide(data[i]+data[j], 2)
+        # Return the indices of original points
+        indices = get_points_of_cluster(linkage_matrix, k).astype(int)
+
+        # Get the points with these indices in the dataset (data[indices]) and 
+        # compute the centroid (merge)
+        centroid = np.divide(np.apply_over_axes(np.sum, data[indices], 0), count_arr[n+k])[0]
 
         # Replace the row with smaller index with the merged row.
         worked_data[min(i,j), :] = centroid
@@ -334,7 +373,7 @@ if __name__ == '__main__':
 
     # ================== Aufgabe 2 ===========================
 
-    linkage_matrix = agglomerative_clustering(iris_data[:10,:])  # Compute the linkage matrix.
+    linkage_matrix = agglomerative_clustering(iris_data[:15,:])  # Compute the linkage matrix.
 
     f2, myplot2 = plt.subplots(figsize=(10,5)) 
 
@@ -343,8 +382,3 @@ if __name__ == '__main__':
     myplot2.set_ylabel("Distance between clusters")
     dendrogram(linkage_matrix)
     plt.show()
-
-
-
-
-
